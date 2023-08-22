@@ -185,7 +185,7 @@ const CustomNavbar = () =>{
 
 
     return (
-        <nav className="bg-white border-gray-200 dark:bg-gray-900">
+        <nav className="bg-gray-900 border-gray-200 dark:bg-gray-900">
             <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <a href="https://flowbite.com/" className="flex items-center">
                     <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">SolTeam</span>
@@ -200,8 +200,8 @@ const CustomNavbar = () =>{
                     </button>
                 </div>
                 { account !== "" &&
-                    <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-cta">
-                        <ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                    <div className="bg-gray-900 items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-cta">
+                        <ul className="bg-gray-900 flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0 dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                             <li>
                                 <Link href="/"><p className="block py-2 pl-3 pr-4 text-white rounded md:bg-transparent" aria-current="page">Home</p></Link>
                             </li>
@@ -209,7 +209,7 @@ const CustomNavbar = () =>{
                                 <Link href="/donation/request"><p className="block py-2 pl-3 pr-4 text-white rounded md:bg-transparent" aria-current="page">Start Donation</p></Link>
                             </li>
                             <li>
-                                <Link href="/donation/start"><p className="block py-2 pl-3 pr-4 text-white rounded md:bg-transparent" aria-current="page">Donate</p></Link>
+                                <Link href="/donation/list"><p className="block py-2 pl-3 pr-4 text-white rounded md:bg-transparent" aria-current="page">Donate</p></Link>
                             </li>
                         </ul>
                     </div>
