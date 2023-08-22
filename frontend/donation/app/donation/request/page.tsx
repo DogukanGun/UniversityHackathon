@@ -1,21 +1,35 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { SSX } from '@spruceid/ssx';
+import { useEnsAddress } from "wagmi";
 
 const DonationRequest = () => {
-    const [step,setStep] = useState(0)
+    const [step,setStep] = useState(1)
+    const [ethDomainText,setEthDomainText] = useState("")
+    const [isETHDomainButtonDisabled,setIsETHDomainButtonDisabled] = useState(true)
+    const { data, isError, isLoading } = useEnsAddress({
+        name: ethDomainText,
+    })
+
+    useEffect(()=>{
+        setIsETHDomainButtonDisabled(isError || isLoading || data == null || data == undefined)
+    },[isError,isLoading,data])
+    
     const signInButtonHandler = async () => {
         const ssx = new SSX({
             modules: {
               storage: true
             },
-          });
+        });
         const session = await ssx.userAuthorization.signIn();
         await ssx.storage.put('wallet', session["address"]);
         await ssx.storage.put('user', session["sessionKey"]);
         console.log(session);
         setStep((prevValue)=>prevValue+1);
     };
+    const nextStepToDonation = () =>{
+        setStep((prevValue)=>prevValue+1);
+    }
     const startDonation = () =>{
 
     }
@@ -28,6 +42,17 @@ const DonationRequest = () => {
                 </> 
             }
             {step == 1 &&
+                <>
+                    <h1 className='text-black font-medium text-center'>Please enter your ETH domain</h1>
+                    <div>
+                        <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Domain Name</label>
+                        <input type="text" id="first_name" value={ethDomainText} onChange={(event)=>setEthDomainText(event.target.value)} className="bg-gray-50 border w-96 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required/>
+                    </div>
+                    <button disabled={isETHDomainButtonDisabled} type="button" onClick={nextStepToDonation} className={`text-white w-full mx-auto ${isETHDomainButtonDisabled ? "bg-gray-500" : "bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300"} font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800`}>Next Step</button>
+                </>
+                
+            }
+            {step == 2 &&
                 <>
                     <h1 className='text-black font-medium text-center'>Fill Out The Donation Form</h1>
                     <div>
