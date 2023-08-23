@@ -14,6 +14,11 @@ const CustomNavbar = () =>{
     const [serviceStatus, setServiceStatus] = useState<ServiceStatus>();
     const [connected, setConnected] = useState(false);
     const [activeProvider, setActiveProvider] = useState<SDKProvider>();
+
+    useEffect(()=>{
+        localStorage.setItem("Chain",chain)
+    },[chain])
+    
     const formatBalance = (rawBalance: string) => {
         const balance = (parseInt(rawBalance) / 1000000000000000000).toFixed(2)
         return balance

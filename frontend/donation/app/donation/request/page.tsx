@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import { SSX } from '@spruceid/ssx';
-import { useEnsAddress } from "wagmi";
+import { useEnsAddress, useEnsAvatar, useEnsName } from "wagmi";
 
 const DonationRequest = () => {
     const [step,setStep] = useState(1)
@@ -10,7 +10,7 @@ const DonationRequest = () => {
     const { data, isError, isLoading } = useEnsAddress({
         name: ethDomainText,
     })
-
+    const ensAvatar = useEnsAvatar({ name: ethDomainText, chainId: (localStorage.getItem("Chain") ?? 1) as number})
     useEffect(()=>{
         setIsETHDomainButtonDisabled(isError || isLoading || data == null || data == undefined)
     },[isError,isLoading,data])
@@ -43,7 +43,13 @@ const DonationRequest = () => {
             }
             {step == 1 &&
                 <>
-                    <h1 className='text-black font-medium text-center'>Please enter your ETH domain</h1>
+                    <div>
+                        <h1 className='text-black font-medium text-center'>Please enter your ETH domain</h1>
+                        <img
+                            src={ensAvatar.data || 'https://i.imgur.com/UhV7H97.jpeg'}
+                            style={{ width: '2rem', height: '2rem', objectFit: 'cover' }}
+                        />
+                    </div>
                     <div>
                         <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Domain Name</label>
                         <input type="text" id="first_name" value={ethDomainText} onChange={(event)=>setEthDomainText(event.target.value)} className="bg-gray-50 border w-96 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required/>
