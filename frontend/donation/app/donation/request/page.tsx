@@ -13,6 +13,9 @@ const DonationRequest = () => {
     const ensAvatar = useEnsAvatar({ name: ethDomainText, chainId: (localStorage.getItem("Chain") ?? 1) as number})
     useEffect(()=>{
         setIsETHDomainButtonDisabled(isError || isLoading || data == null || data == undefined)
+        if(data != null){
+            ensAvatar.refetch()
+        }
     },[isError,isLoading,data])
     
     const signInButtonHandler = async () => {
