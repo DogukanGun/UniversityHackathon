@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.4;
 
+import "hardhat/console.sol";
 import "https://github.com/bacalhau-project/lilypad-v0/blob/main/hardhat/contracts/LilypadEventsUpgradeable.sol";
 import "https://github.com/bacalhau-project/lilypad-v0/blob/main/hardhat/contracts/LilypadCallerInterface.sol";
 
@@ -11,9 +12,7 @@ contract Lilypad is LilypadCallerInterface {
     mapping(uint=>string) public prompts;
     mapping(uint=>string) public results;
 
-    event Completed(uint result);
-    event Success(string result);
-    event ErrorRes(string result);
+    event JobResult(string result);
 
     constructor(address _bridgeContractAddress) {
         bridgeAddress = _bridgeContractAddress;
@@ -22,63 +21,51 @@ contract Lilypad is LilypadCallerInterface {
         lilypadFee = fee;
     }
 
-    string constant specStart = '{'
-        '"Engine": "Docker",'
-        '"Verifier": "Noop",'
-        '"Publisher": "Estuary",'
-        '"PublisherSpec": {"Type": "Estuary"},'
-        '"Docker": {'
-        '"Image": "dogukangun/donationforuniversity:python",'
-        '"Entrypoint": ["python", "worker.py"';
-
-    string constant specEnd =
-      '"]},'
-      '"Resources": {"GPU": ""},'
-      '"Outputs": [{"Name": "outputs", "StorageSource":"IPFS","Path": "/outputs"}],'
-      '"Deal": {"Concurrency": 1}'
-      '}';
-
       /** Call the runLilypadJob() to generate a stable diffusion image from a text prompt*/
     function request(string calldata _prompt) external payable {
         require(msg.value >= lilypadFee, "Not enough to run Lilypad job");
-        string memory spec = string(abi.encodePacked(       
+        string memory spec = string(abi.encodePacked(
             "{",
             '"Engine": "Docker",',
             '"Verifier": "Noop",',
             '"Publisher": "Estuary",',
             '"PublisherSpec": {"Type": "Estuary"},',
-            '"Docker": {"Image": "dogukangun/donationforuniversity:python3", "EnvironmentVariables": ["WALLET_ADDRESS=',
+            '"Docker": {"Image": "dogukangun/donationforuniversity:go_latest6", "EnvironmentVariables": ["WALLET_ADDRESS=',
             _prompt,
             '"]},',
             '"Language": {"JobContext": {}},',
             '"Wasm": {"EntryModule": {}},',
             '"Resources": {"GPU": ""},',
+            '"Network": {"Type": "HTTP", "Domains": ["eth.public-rpc.com"]},',
             '"Timeout": 1800,',
             '"Outputs": [{"StorageSource": "IPFS", "Name": "outputs", "Path": "/outputs"}],',
             '"Deal": {"Concurrency": 1}',
             "}"
-        ));      
+        ));
         uint id = bridge.runLilypadJob{value: lilypadFee}(address(this), spec, uint8(LilypadResultType.StdOut));
         require(id > 0, "job didn't return a value");
         prompts[id] = _prompt;
-        emit Completed(id);
+        emit JobResult(_prompt);
     }
 
     function lilypadFulfilled(address _from, uint _jobId,
         LilypadResultType _resultType, string calldata _result)
         external override {
-        // Do something when the LilypadEvents contract returns
-        // results successfully
+        console.log("Job Id: ", _jobId, " has been fulfilled with result: ", _result);
+        require(_from == address(bridge)); 
 
+        // Save the CID against the caller's address
         results[_jobId] = _result;
-        emit Success(_result);
+        emit JobResult(_result);
     }
 
     function lilypadCancelled(address _from, uint _jobId, string
           calldata _errorMsg) external override {
+                console.log("Job Id: ", _jobId, " has been fulfilled with result: ", _errorMsg);
+
           // Do something if there's an error returned by the
           // LilypadEvents contract
         results[_jobId] = _errorMsg;
-        emit ErrorRes(_errorMsg);
+        emit JobResult(_errorMsg);
     }
 }

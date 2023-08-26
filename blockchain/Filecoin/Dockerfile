@@ -6,6 +6,6 @@ RUN update-ca-certificates
 
 WORKDIR /
 ADD main ./main
-ADD score.env ./score.env
+ADD server.env ./server.env
 
 ENTRYPOINT ./main
