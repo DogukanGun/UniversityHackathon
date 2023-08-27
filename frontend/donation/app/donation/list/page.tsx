@@ -23,11 +23,11 @@ const DonationList = () =>{
             <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
                 <div className="mb-6 flex items-end justify-between gap-4">
                     <div className="grid gap-x-4 gap-y-8 sm:grid-cols-2 md:gap-x-6 lg:grid-cols-3 xl:grid-cols-4">
-                        <DonationItem onClick={itemOnClick}/>
-                        <DonationItem onClick={itemOnClick}/>
-                        <DonationItem onClick={itemOnClick}/>
-                        <DonationItem onClick={itemOnClick}/>
-                        <DonationItem onClick={itemOnClick}/>
+                        <DonationItem onClick={itemOnClick} donationName="Jack.eth"/>
+                        <DonationItem onClick={itemOnClick} donationName="Daniel.eth"/>
+                        <DonationItem onClick={itemOnClick} donationName="Samuel.eth"/>
+                        <DonationItem onClick={itemOnClick} donationName="Cem.eth"/>
+                        <DonationItem onClick={itemOnClick} donationName="Dogukan.eth"/>
 
                         {isModalVisible &&
                             <CustomModal onAccepted={modelOnAcceptClicked} onClose={modelOnCloseClicked}/>

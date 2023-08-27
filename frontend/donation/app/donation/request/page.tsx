@@ -4,7 +4,7 @@ import { SSX } from '@spruceid/ssx';
 import { useEnsAddress, useEnsAvatar, useEnsName } from "wagmi";
 
 const DonationRequest = () => {
-    const [step,setStep] = useState(1)
+    const [step,setStep] = useState(0)
     const [ethDomainText,setEthDomainText] = useState("")
     const [isETHDomainButtonDisabled,setIsETHDomainButtonDisabled] = useState(true)
     const { data, isError, isLoading } = useEnsAddress({
